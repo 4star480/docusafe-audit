@@ -1,5 +1,4 @@
 import { NextRequest, NextResponse } from "next/server";
-import pdfParse from "pdf-parse";
 import mammoth from "mammoth";
 import {
   AuditFlag,
@@ -14,6 +13,18 @@ interface AnalyzeResponse {
   text: string;
   flags: AuditFlag[];
   rule: AuditRule;
+}
+
+// Use a dynamic import so Turbopack doesn't require a static default export.
+async function getPdfParse() {
+  const mod = await import("pdf-parse");
+  // Some builds of pdf-parse export the function as the module itself,
+  // others under `default`. This normalizes both cases.
+  const fn = (mod as any).default ?? (mod as any);
+  if (typeof fn !== "function") {
+    throw new Error("pdf-parse module did not export a callable function");
+  }
+  return fn as (input: Buffer) => Promise<{ text?: string }>;
 }
 
 export async function POST(req: NextRequest) {
@@ -95,6 +106,7 @@ async function extractTextFromBuffer(
     opts.mimeType === "application/pdf" ||
     lowerName.endsWith(".pdf")
   ) {
+    const pdfParse = await getPdfParse();
     const result = await pdfParse(buffer);
     return result.text ?? "";
   }
