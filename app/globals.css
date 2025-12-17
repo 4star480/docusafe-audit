@@ -1,0 +1,23 @@
+@import "tailwindcss";
+
+@theme inline {
+  --color-background: #020617; /* deep navy */
+  --color-foreground: #f9fafb;
+  --color-muted: #0f172a;
+  --color-border: #1f2937;
+  --color-accent: #38bdf8; /* cyan accent */
+  --color-accent-soft: #0b1120;
+  --color-danger: #f97373;
+  --color-card: #020617;
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+}
+
+body {
+  background: radial-gradient(circle at top, #020617 0, #020617 40%, #020617 100%);
+  color: var(--color-foreground);
+}
+
+* {
+  box-sizing: border-box;
+}
